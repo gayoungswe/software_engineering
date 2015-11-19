@@ -1,3 +1,6 @@
+//software engineering term project
+//8_Auction
+
 #include <iostream>
 #include <string>
 
