@@ -52,17 +52,17 @@ public:
 
 		if ((retcode = SQLAllocEnv(&henv)) != SQL_SUCCESS)
 		{
-			printf("SQLAllocEnv: error code = %d\n", retcode);
+			cout << "SQLAllocEnv: error code = " << retcode << endl;
 			return 0;
 		}
 		if ((retcode = SQLAllocConnect(henv, &hdbc)) != SQL_SUCCESS)
 		{
-			printf("SQLAllocConnect: error code = %d\n", retcode);
+			cout << "SQLAllocConnect: error code = " << retcode << endl;
 			return 0;
 		}
 		if ((retcode = SQLConnect(hdbc, (SQLWCHAR *)TEXT("ODBC_se8"), SQL_NTS, (SQLWCHAR *)TEXT("c##se8"), SQL_NTS, (SQLWCHAR *)TEXT("software"), SQL_NTS)) != SQL_SUCCESS)
 		{
-			printf("SQLConnect: error code = %d\n", retcode);
+			cout << "SQLConnect: error code = " << retcode << endl;
 			return 0;
 		}
 
@@ -137,6 +137,8 @@ public:
 		return 0;
 	}
 };
+
+
 
 int main()
 {
