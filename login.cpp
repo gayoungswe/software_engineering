@@ -22,14 +22,15 @@ SQLHSTMT	hstmt;
 class USER
 {
 protected:
-	char user_id[20];
-	char nick_name[20];
+	string user_id;
+	string nick_name;
+
 public:
 	USER(){}
-	USER(char uid[20], char nick[20])
+	USER(string uid, string nick)
 	{
-		strcpy_s(user_id, sizeof(user_id), uid);
-		strcpy_s(nick_name, sizeof(nick_name), nick);
+		user_id = uid;
+		nick_name = nick;
 	}
 	~USER(){}
 };
@@ -39,10 +40,10 @@ class G_USER : public USER
 {
 public:
 	G_USER(){}
-	G_USER(char uid[20], char nick[20])
+	G_USER(string uid, string nick)
 	{
-		strcpy_s(user_id, sizeof(user_id), uid);
-		strcpy_s(nick_name, sizeof(nick_name), nick);
+		user_id = uid;
+		nick_name = nick;
 	}
 	~G_USER(){}
 };
@@ -52,10 +53,10 @@ class ADMIN : public USER
 {
 public:
 	ADMIN(){}
-	ADMIN(char uid[20], char nick[20])
+	ADMIN(string uid, string nick)
 	{
-		strcpy_s(user_id, sizeof(user_id), uid);
-		strcpy_s(nick_name, sizeof(nick_name), nick);
+		user_id = uid;
+		nick_name = nick;
 	}
 	~ADMIN(){}
 };
@@ -65,7 +66,8 @@ public:
 class LOGIN
 {
 private:
-	char id[20];
+	//char id[20];
+	string id;
 	string pw;
 	string nick;
 	char sqlpw[20];
@@ -79,6 +81,7 @@ public:
 	~LOGIN(){}
 	USER* login()
 	{
+		char t_id[20];
 		SQLINTEGER len_id = SQL_NTS;
 		SQLCHAR isqlpw[20];
 		SQLCHAR isqlnick[20];
@@ -91,6 +94,11 @@ public:
 
 		cin.clear();  // 에러 플래그를 지우기 위해 cin에 있는 clear 함수를 사용
 		cin.ignore(INT_MAX, '\n');
+
+
+		//query 문에 bindparameter 하기위해 char배열로,, string으론 하는법을 알지못함..
+		strncpy_s(t_id, id.c_str(), sizeof(t_id));
+		t_id[sizeof(t_id) - 1] = 0;
 
 		//cout << id << endl;
 
@@ -130,20 +138,17 @@ public:
 			SQL_PARAM_INPUT,	
 			SQL_C_CHAR,		
 			SQL_CHAR,		
-			20,	
+			sizeof(t_id),
 			0,	
-			id,		
-			20,		
+			&t_id,		
+			sizeof(t_id),
 			&len_id 
 			);
 		
-		//for debug
-		//cout << retcode << endl;
-
 		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)query.c_str(), SQL_NTS);
 
 		//for debug
-		//cout << "\n1111111111111111" << endl;	
+		//cout << "\nSQLExecDirect retcode = " << retcode << endl;	
 		
 		if (retcode == SQL_SUCCESS)
 		{
@@ -180,6 +185,7 @@ public:
 					sqlnick[j] = '\0';
 				}
 
+				//char to string..
 				string pw2 = sqlpw;					//sqlpw -> string
 				string nick = sqlnick;				//sqlnick -> string
 
@@ -192,11 +198,11 @@ public:
 
 					if (sqlauth != 1)      //권한이 일반유저일 때
 					{
-						user = new G_USER(id, sqlnick);	//일반 유저 객체 동적 할당
+						user = new G_USER(id, nick);	//일반 유저 객체 동적 할당
 					}
 					else      //권한이 관리자일때
 					{
-						user = new ADMIN(id, sqlnick);		//관리자 유저 객체 동적할당
+						user = new ADMIN(id, nick);		//관리자 유저 객체 동적할당
 					}
 				}
 				else
@@ -233,7 +239,9 @@ int main()
 {
 	LOGIN l;
 
-	USER * user=l.login();
+	USER * user = l.login();	//login 하고 성공시 유저객체를반환
 
 	cout << "main끝!" << endl;
+
+	delete user;		//유저객체 소멸
 }
