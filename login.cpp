@@ -78,6 +78,11 @@ private:
 
 public:
 	LOGIN(){}
+	LOGIN(string id, string pw)
+	{
+		this->id = id;
+		this->pw = pw;
+	}
 	~LOGIN(){}
 	USER* login()
 	{
@@ -88,28 +93,9 @@ public:
 		SQLINTEGER isqlauth;
 		USER* user=NULL;
 
-		//id 입력 -> gui text 상자
-		cout << "id : ";
-		cin >> id;
-
-		cin.clear();  // 에러 플래그를 지우기 위해 cin에 있는 clear 함수를 사용
-		cin.ignore(INT_MAX, '\n');
-
-
 		//query 문에 bindparameter 하기위해 char배열로,, string으론 하는법을 알지못함..
 		strncpy_s(t_id, id.c_str(), sizeof(t_id));
 		t_id[sizeof(t_id) - 1] = 0;
-
-		//cout << id << endl;
-
-		//pw 입력 -> gui text 상자
-		cout << "pw : ";
-		getline(cin, pw	);
-
-		cin.clear();  // 에러 플래그를 지우기 위해 cin에 있는 clear 함수를 사용
-		//cin.ignore(INT_MAX, '\n');
-
-		//cout << pw << endl;
 
 		SQLRETURN retcode;
 
@@ -237,7 +223,26 @@ public:
 
 int main()
 {
-	LOGIN l;
+	string id, pw;
+
+	//gui에서 입력받을부분
+	//id 입력 -> gui text 상자
+	cout << "id : ";
+	getline(cin, id);
+
+	cin.clear();  // 에러 플래그를 지우기 위해 cin에 있는 clear 함수를 사용
+	//cin.ignore(INT_MAX, '\n');
+
+	//pw 입력 -> gui text 상자
+	cout << "pw : ";
+	getline(cin, pw);
+
+	cin.clear();  // 에러 플래그를 지우기 위해 cin에 있는 clear 함수를 사용
+	//cin.ignore(INT_MAX, '\n');
+
+
+	//로그인
+	LOGIN l(id, pw);			//로그인객체생성 (생성자 호출)
 
 	USER * user = l.login();	//login 하고 성공시 유저객체를반환
 
