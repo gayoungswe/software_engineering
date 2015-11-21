@@ -24,6 +24,7 @@ private:
 	char id[6];
 	char pw[8];
 	char sqlpw[8];
+	wstring	query = L"select userpw from aucuser where userid = ? ;";
 
 public:
 	int login()
@@ -83,25 +84,24 @@ public:
 
 		cout << retcode << endl;
 
-		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)TEXT("select userpw from aucuser where userid = ?;"), SQL_NTS);
+		retcode = SQLExecDirect(hstmt, (SQLWCHAR *)query.c_str(), SQL_NTS);
 
 		//for debug
-		cout << "\n1111111111111111" << endl;
+		//cout << "\n1111111111111111" << endl;	
 		
 		if (retcode == SQL_SUCCESS)
 		{
 			//for debug
-			cout << "22222222222222222" << endl;
+			//cout << "22222222222222222" << endl;
 
 			retcode = SQLBindCol(hstmt, 1, SQL_C_CHAR, &sqlpw, 6, (SQLINTEGER *)&isqlpw);		//비밀번호
 
 			cout << retcode << endl;
 
-
 			if (SQLFetch(hstmt) == SQL_SUCCESS)
 			{
 				//for debug
-				cout << "333333333" << endl;
+				//cout << "333333333" << endl;
 
 				cout << sqlpw << endl;
 				cout << pw << endl;
@@ -109,6 +109,7 @@ public:
 				if(strcmp(pw, sqlpw) == 0)
 				{
 					cout << "로그인 성공!" << endl;
+
 				}
 				else
 				{
