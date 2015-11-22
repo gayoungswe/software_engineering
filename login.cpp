@@ -56,21 +56,18 @@ public:
 	}
 };
 
-//user클래스
 
 //user클래스
 class USER
 {
 protected:
 	string user_id;
-	string nick_name;
 
 public:
 	USER(){}
-	USER(string uid, string nick)
+	USER(string uid)
 	{
 		user_id = uid;
-		nick_name = nick;
 	}
 	~USER(){}
 };
@@ -80,10 +77,9 @@ class G_USER : public USER
 {
 public:
 	G_USER(){}
-	G_USER(string uid, string nick)
+	G_USER(string uid)
 	{
 		user_id = uid;
-		nick_name = nick;
 	}
 	~G_USER(){}
 };
@@ -93,10 +89,9 @@ class ADMIN : public USER
 {
 public:
 	ADMIN(){}
-	ADMIN(string uid, string nick)
+	ADMIN(string uid)
 	{
 		user_id = uid;
-		nick_name = nick;
 	}
 	~ADMIN(){}
 };
@@ -106,15 +101,12 @@ public:
 class LOGIN
 {
 private:
-	//char id[20];
 	string id;
 	string pw;
-	string nick;
 	char sqlpw[20];
-	char sqlnick[20];
 	int sqlauth;
 	
-	wstring	query = L"select userpw, nick, authority from aucuser where userid = ? ;";
+	wstring	query = L"select userpw, authority from aucuser where userid = ? ;";
 
 public:
 	LOGIN(){}
@@ -132,7 +124,6 @@ public:
 		char t_id[20];
 		SQLINTEGER len_id = SQL_NTS;
 		SQLCHAR isqlpw[20];
-		SQLCHAR isqlnick[20];
 		SQLINTEGER isqlauth;
 		USER* user=NULL;
 
@@ -170,7 +161,6 @@ public:
 			//cout << "22222222222222222" << endl;
 
 			retcode = SQLBindCol(hstmt, 1, SQL_C_CHAR, &sqlpw, 20, (SQLINTEGER *)&isqlpw);			//비밀번호
-			retcode = SQLBindCol(hstmt, 2, SQL_C_CHAR, &sqlnick, 20, (SQLINTEGER *)&isqlnick);		//닉네임
 			retcode = SQLBindCol(hstmt, 3, SQL_C_SLONG, &sqlauth, 0, (SQLINTEGER *)&isqlauth);		//권한
 
 			//for debug
@@ -192,16 +182,8 @@ public:
 					sqlpw[i] = '\0';
 				}
 
-				int j;
-				for (j = 0; (int)sqlnick[j] != 32; j++);
-				for (j; j < 10; j++)
-				{
-					sqlnick[j] = '\0';
-				}
-
 				//char to string..
 				string pw2 = sqlpw;					//sqlpw -> string
-				string nick = sqlnick;				//sqlnick -> string
 
 				/*cout << pw.length() << endl;
 				cout << pw2.length() << endl;*/
@@ -212,11 +194,11 @@ public:
 
 					if (sqlauth != 1)      //권한이 일반유저일 때
 					{
-						user = new G_USER(id, nick);	//일반 유저 객체 동적 할당
+						user = new G_USER(id);	//일반 유저 객체 동적 할당
 					}
 					else      //권한이 관리자일때
 					{
-						user = new ADMIN(id, nick);		//관리자 유저 객체 동적할당
+						user = new ADMIN(id);		//관리자 유저 객체 동적할당
 					}
 				}
 				else
