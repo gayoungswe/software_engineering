@@ -18,6 +18,46 @@ SQLHENV		henv;
 SQLHDBC		hdbc;
 SQLHSTMT	hstmt;
 
+SQLRETURN retcode;
+
+class AUC_DB
+{
+public:
+	int auc_db_conn()
+	{
+		if ((retcode = SQLAllocEnv(&henv)) != SQL_SUCCESS)
+		{
+			cout << "SQLAllocEnv: error code = " << retcode << endl;
+			return 0;
+		}
+		if ((retcode = SQLAllocConnect(henv, &hdbc)) != SQL_SUCCESS)
+		{
+			cout << "SQLAllocConnect: error code = " << retcode << endl;
+			return 0;
+		}
+		if ((retcode = SQLConnect(hdbc, (SQLWCHAR *)TEXT("ODBC_se8"), SQL_NTS, (SQLWCHAR *)TEXT("c##se8"), SQL_NTS, (SQLWCHAR *)TEXT("software"), SQL_NTS)) != SQL_SUCCESS)
+		{
+			cout << "SQLConnect: error code = " << retcode << endl;
+			return 0;
+		}
+
+		SQLAllocStmt(hdbc, &hstmt);
+		return 1;
+	}
+
+	int auc_db_conn_free()
+	{
+		SQLFreeStmt(hstmt, SQL_DROP);
+		SQLDisconnect(hdbc);
+		SQLFreeConnect(hdbc);
+		SQLFreeEnv(henv);
+
+		return 0;
+	}
+};
+
+//user클래스
+
 //user클래스
 class USER
 {
@@ -78,12 +118,15 @@ private:
 
 public:
 	LOGIN(){}
+
 	LOGIN(string id, string pw)
 	{
 		this->id = id;
 		this->pw = pw;
 	}
+
 	~LOGIN(){}
+
 	USER* login()
 	{
 		char t_id[20];
@@ -97,25 +140,10 @@ public:
 		strncpy_s(t_id, id.c_str(), sizeof(t_id));
 		t_id[sizeof(t_id) - 1] = 0;
 
-		SQLRETURN retcode;
+		AUC_DB db;
 
-		if ((retcode = SQLAllocEnv(&henv)) != SQL_SUCCESS)
-		{
-			cout << "SQLAllocEnv: error code = " << retcode << endl;
-			return 0;
-		}
-		if ((retcode = SQLAllocConnect(henv, &hdbc)) != SQL_SUCCESS)
-		{
-			cout << "SQLAllocConnect: error code = " << retcode << endl;
-			return 0;
-		}
-		if ((retcode = SQLConnect(hdbc, (SQLWCHAR *)TEXT("ODBC_se8"), SQL_NTS, (SQLWCHAR *)TEXT("c##se8"), SQL_NTS, (SQLWCHAR *)TEXT("software"), SQL_NTS)) != SQL_SUCCESS)
-		{
-			cout << "SQLConnect: error code = " << retcode << endl;
-			return 0;
-		}
+		db.auc_db_conn();		//db 연결
 
-		SQLAllocStmt(hdbc, &hstmt);
 
 		retcode = SQLBindParameter
 			(
@@ -211,10 +239,7 @@ public:
 			cout << "Something wrong in SQLExecDirect. Error code = " << retcode << endl;
 		}
 
-		SQLFreeStmt(hstmt, SQL_DROP);
-		SQLDisconnect(hdbc);
-		SQLFreeConnect(hdbc);
-		SQLFreeEnv(henv);
+		db.auc_db_conn_free();
 
 		return user;		//로그인 된 유저 객체 포인터 반환
 	}
