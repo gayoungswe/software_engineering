@@ -151,6 +151,15 @@ public:
 				SQLFreeStmt(hstmt, SQL_CLOSE);		//////!!중요 이게없으면 첫번째 중복이고 두번째 사용가능때 안됨
 				return false;
 			}
+			else if (strncmp(t_id, sqlid, id.length() + 1))
+			{
+				//sqlid 와 id 비교
+				//대문자 소문자 상관없이 같은 문자여도 중복
+
+				cout << "이미 사용중인 아이디 입니다. \n다른 아이디를 입력하세요.\n" << endl;
+				SQLFreeStmt(hstmt, SQL_CLOSE);		//////!!중요 이게없으면 첫번째 중복이고 두번째 사용가능때 안됨
+				return false;
+			}
 			else
 			{
 				//입력한 아이디 중복 없음->사용 가능
@@ -161,6 +170,7 @@ public:
 				//for debug
 				//cout << " 여기오긴하는거냐.." << endl;
 				
+				SQLFreeStmt(hstmt, SQL_CLOSE);
 				return true;
 			}
 		}
@@ -248,6 +258,9 @@ public:
 		if (retcode == SQL_SUCCESS)
 		{
 			cout << "insert 성공!" << endl;
+
+			SQLFreeStmt(hstmt, SQL_CLOSE);	//
+
 			retcode = SQLEndTran(SQL_HANDLE_DBC, hdbc, SQL_COMMIT);		//commit;
 			if (!SQL_SUCCEEDED(retcode)) {
 				printf("Error committing transaction.\n");
