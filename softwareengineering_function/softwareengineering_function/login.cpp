@@ -72,7 +72,7 @@ public:
 		if (retcode == SQL_SUCCESS)
 		{
 			retcode = SQLBindCol(hstmt, 1, SQL_C_CHAR, &sqlpw, 20, (SQLINTEGER *)&isqlpw);			//비밀번호
-			retcode = SQLBindCol(hstmt, 3, SQL_C_SLONG, &sqlauth, 0, (SQLINTEGER *)&isqlauth);		//권한
+			retcode = SQLBindCol(hstmt, 2, SQL_C_SLONG, &sqlauth, 0, (SQLINTEGER *)&isqlauth);		//권한
 
 			if (SQLFetch(hstmt) == SQL_SUCCESS)
 			{
