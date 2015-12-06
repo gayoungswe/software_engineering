@@ -1,4 +1,13 @@
 package yuauc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -14,6 +23,13 @@ public class JOIN extends javax.swing.JFrame {
     /**
      * Creates new form JOIN
      */
+	String tmp_id;
+    String tmp_pw;
+    String tmp_pw2;
+    
+    boolean id_is_ok=false;
+    boolean pw_is_ok=false;
+    
     public JOIN() {
         initComponents();
     }
@@ -25,67 +41,27 @@ public class JOIN extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-    private void initComponents() {
-
-        jTextField1 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jPasswordField2 = new javax.swing.JPasswordField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+    private void initComponents()
+    {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-
+        jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jPasswordField2 = new javax.swing.JPasswordField();
+        jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        jTextField1 = new javax.swing.JTextField();
+ 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("YUAuction :: Join");
         setPreferredSize(new java.awt.Dimension(400, 300));
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         getContentPane().setLayout(null);
 
-        jTextField1.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
-        jTextField1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        getContentPane().add(jTextField1);
-        jTextField1.setBounds(150, 70, 90, 21);
-        getContentPane().add(jPasswordField1);
-        jPasswordField1.setBounds(150, 110, 90, 21);
-        getContentPane().add(jPasswordField2);
-        jPasswordField2.setBounds(150, 150, 90, 21);
-
-        jTextField2.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
-        jTextField2.setText("PW check");
-        jTextField2.setBorder(null);
-        jTextField2.setEnabled(false);
-        getContentPane().add(jTextField2);
-        jTextField2.setBounds(50, 150, 53, 17);
-
-        jTextField3.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
-        jTextField3.setText("ID");
-        jTextField3.setBorder(null);
-        jTextField3.setEnabled(false);
-        getContentPane().add(jTextField3);
-        jTextField3.setBounds(50, 70, 12, 17);
-
-        jTextField4.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
-        jTextField4.setText("PW");
-        jTextField4.setBorder(null);
-        jTextField4.setEnabled(false);
-        getContentPane().add(jTextField4);
-        jTextField4.setBounds(50, 110, 18, 17);
-
-        jButton1.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
-        jButton1.setText("ID 중복확인");
-        jButton1.setActionCommand("중복확인");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        getContentPane().add(jButton1);
-        jButton1.setBounds(260, 70, 110, 25);
-
         jButton2.setText("취소");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.addActionListener(new java.awt.event.ActionListener(){
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
@@ -102,20 +78,163 @@ public class JOIN extends javax.swing.JFrame {
         getContentPane().add(jButton3);
         jButton3.setBounds(130, 230, 77, 23);
 
+        jPanel1.setLayout(null);
+
+        jLabel2.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
+        jLabel2.setText("ID");
+        jPanel1.add(jLabel2);
+        jLabel2.setBounds(70, 70, 12, 20);
+        jTextField1.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
+        jPanel1.add(jTextField1);
+        jTextField1.setBounds(150, 70, 90, 25);
+        
+        jLabel3.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
+        jLabel3.setText("PASSWORD");
+        jPanel1.add(jLabel3);
+        jLabel3.setBounds(70, 110, 65, 20);
+        jPanel1.add(jPasswordField1);
+        jPasswordField1.setBounds(150, 110, 90, 25);
+
+        jLabel1.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
+        jLabel1.setText("PW CHECK");
+        jPanel1.add(jLabel1);
+        jLabel1.setBounds(70, 150, 60, 20);
+        jPanel1.add(jPasswordField2);
+        jPasswordField2.setBounds(150, 150, 90, 25);
+
+        jButton1.setFont(new java.awt.Font("맑은 고딕", 0, 12)); // NOI18N
+        jButton1.setText("ID 중복확인");
+        jButton1.setActionCommand("중복확인");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton1);
+        jButton1.setBounds(260, 70, 110, 25);
+
+        getContentPane().add(jPanel1);
+        jPanel1.setBounds(0, 0, 400, 300);
+
         pack();
     }// </editor-fold>                        
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)
+    {
+    	System.out.println("아이디 중복확인!");
+    	
+    	Connection conn=null;
+    	PreparedStatement stmt=null;
+    	ResultSet rset=null;
+    	try
+		{
+			tmp_id=jTextField1.getText();
+			
+			if(tmp_id.isEmpty())
+			{
+				System.out.println("음");
+				JOptionPane.showMessageDialog(null, "먼저 ID를 입력해 주세요.", " ", JOptionPane.WARNING_MESSAGE);
+				return;
+			}	
+			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@114.206.20.16:1521:ora", "software", "software");
+			
+			String ID_check="select userid from aucuser where userid=?";
+		    stmt = conn.prepareStatement(ID_check);
+		    stmt.setString(1,tmp_id);
+		    rset=stmt.executeQuery(); 
+        
+	        if(rset.next())
+	        {
+	        	JOptionPane.showMessageDialog(null, "이미 사용중인 ID 입니다.", "사용 불가", JOptionPane.WARNING_MESSAGE);
+	        	id_is_ok=false;
+	        	return;
+	        }
+		    else
+		    {
+		    	JOptionPane.showMessageDialog(null, "사용 가능한 ID 입니다.", "사용 가능" , JOptionPane.INFORMATION_MESSAGE);	    
+		    	id_is_ok=true;
+		    }
+		}
+		catch (SQLException sqle)
+		{
+			System.out.println("DB접속에러인가" + sqle);
+			System.err.println("SQLException : " + sqle);
+		}
+		finally
+		{
+            if(rset != null) try{rset.close();}catch(SQLException ex){}  
+            if(stmt != null) try{stmt.close();}catch(SQLException ex){}            // PreparedStatement 객체 해제
+            if(conn != null) try{conn.close();}catch(SQLException ex){} 
+		}
     }                                        
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)
+    {           
+    	Connection conn=null;
+    	PreparedStatement stmt=null;
+    	ResultSet rset=null;
+    	
+    	tmp_pw=jPasswordField1.getText();
+		tmp_pw2=jPasswordField2.getText();
+		
+		if(tmp_id.isEmpty() || tmp_pw.isEmpty() || tmp_pw2.isEmpty())
+		{
+			System.out.println("빈칸을 모두 채워주세요");
+			JOptionPane.showMessageDialog(null, "빈칸을 모두 채워주세요.", " ", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else if(!id_is_ok)
+		{
+			System.out.println("ID 중복체크를 해주세요");
+			JOptionPane.showMessageDialog(null, "ID 중복 체크를 해주세요.", " ", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else if(!tmp_pw.equals(tmp_pw2))
+		{
+			JOptionPane.showMessageDialog(null, "비밀번호가 일치하지 않습니다.", " ", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else if(tmp_pw.equals(tmp_pw2))
+		{
+			pw_is_ok=true;
+		}
+		
+		if(id_is_ok && pw_is_ok)
+		{
+			try
+			{
+				conn = DriverManager.getConnection("jdbc:oracle:thin:@114.206.20.16:1521:ora", "software", "software");
+				
+				String joinquery="insert into aucuser values(?, ?, 0)";
+	            stmt = conn.prepareStatement(joinquery);
+	            stmt.setString(1,tmp_id);
+	            stmt.setString(2, tmp_pw);
+	            rset=stmt.executeQuery(); 
+	            conn.commit();
+	            
+	            JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.\n 로그인 해주세요.", " ", JOptionPane.INFORMATION_MESSAGE);
+	            dispose();
+	            // return;
+			}
+			catch (SQLException sqle)
+			{
+				System.out.println("DB접속에러인가" + sqle);
+				System.err.println("SQLException : " + sqle);
+			}
+			finally
+			{
+	            if(rset != null) try{rset.close();}catch(SQLException ex){}  
+	            if(stmt != null) try{stmt.close();}catch(SQLException ex){}            // PreparedStatement 객체 해제
+	            if(conn != null) try{conn.close();}catch(SQLException ex){} 
+			}
+		}	
     }                                        
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {  
-    	 dispose();
-        // TODO add your handling code here:
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)
+    {                                         
+        // TODO add your handling code here://취소
+    	dispose();
     }                                        
 
     /**
@@ -157,11 +276,13 @@ public class JOIN extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JPasswordField jPasswordField2;
+    private javax.swing.JPasswordField jPasswordField3;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     // End of variables declaration                   
 }

@@ -1,5 +1,14 @@
 package yuauc;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,11 +19,17 @@ package yuauc;
  *
  * @author LEEGAYOUNG
  */
-public class LOGIN extends javax.swing.JFrame {
-
+public class LOGIN extends javax.swing.JFrame
+{
+	//static USER user;
     /**
      * Creates new form NewJFrame
      */
+	
+	static String user_id;
+	static String user_pw;
+	static int user_auth;
+	
     public LOGIN() {
         initComponents();
     }
@@ -52,6 +67,11 @@ public class LOGIN extends javax.swing.JFrame {
         jPasswordField1.setBounds(90, 140, 100, 21);
 
         jButton1.setText("로그인");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         getContentPane().add(jButton1);
         jButton1.setBounds(220, 100, 90, 23);
 
@@ -67,11 +87,109 @@ public class LOGIN extends javax.swing.JFrame {
         pack();
     }// </editor-fold>                        
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)
+    {          
+    	Connection conn=null;
+    	PreparedStatement stmt=null;
+    	ResultSet rset=null;
+    	
+    	System.out.println("로그인버튼눌렀어");
+    	
+    	 // TODO add your handling code here:
+    	try
+    	{
+    		System.out.println("오라클드라이버가있니");
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		}
+    	catch (ClassNotFoundException e)
+    	{
+			System.out.println("오라클드라이버없대");
+			System.err.println("ClassNotFoundException : " + e.getMessage());
+		}
+		
+		try
+		{
+			System.out.println("DB접속하자");
+			//conn = DriverManager.getConnection("jdbc:oracle:thin:@114.206.20.16:1521:ora", "software", "software");
+			//stmt = conn.createStatement();
+			
+			System.out.println();
+			
+			//접속되는지 확인 위한 코드
+			//rset = stmt.executeQuery("select * from aucuser");
+			//while (rset.next()) {
+			//	System.out.println("userid : " + rset.getString("userid") + ",\t" + "userpw: " + rset.getString("userpw") + ",\t" + "userauth: " + rset.getInt("authority"));
+			//}
+			
+			String uid=jTextField1.getText();
+			String upw=jPasswordField1.getText();
+			
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@114.206.20.16:1521:ora", "software", "software");
+					
+			String loginquery="select * from aucuser where userid=?";
+            stmt = conn.prepareStatement(loginquery);
+            stmt.setString(1,uid);
+            rset=stmt.executeQuery(); 
+            
+            System.out.println("어디까지 왔니");
+			
+            if(rset.next())
+            {            	          
+				//로그인 성공
+				//유저객체에 변수 넣고..
+				user_id=rset.getString("userid");
+				user_pw=rset.getString("userpw");
+				user_auth=rset.getInt("authority");
+				
+				System.out.print(user_id);
+				System.out.print(user_pw);
+				System.out.println(user_auth);
+				
+		    	if(user_pw == null)
+		    	{
+		    		JOptionPane.showMessageDialog(null, "ID, PW를 다시 확인해 주세요.", "로그인 실패", JOptionPane.WARNING_MESSAGE);
+		    		return;
+		    	}
+		    	else if(!user_pw.equals(upw))
+		    	{
+		    				System.out.println("요기");
+		    				JOptionPane.showMessageDialog(null, "ID, PW를 다시 확인해 주세요.", "로그인 실패", JOptionPane.WARNING_MESSAGE);
+		    				return;
+                }
+		    	else
+		    	{
+			    	System.out.println("로그인 성공@!");
+					
+			    	AUCMAIN mainframe = new AUCMAIN();
+			    	mainframe.setVisible(true);
+			    	
+			    	rset.close();
+			    	stmt.close();
+			    	conn.close();
+			    	dispose();
+			    }
+            }
+            else
+            {
+            	System.out.println("응?");
+            	JOptionPane.showMessageDialog(null, "올바른 계정이 아닙니다.", "로그인 실패", JOptionPane.WARNING_MESSAGE);
+            }
+		}
+		catch (SQLException sqle)
+		{
+			System.out.println("DB접속에러인가" + sqle);
+			System.err.println("SQLException : " + sqle);
+		}
+		finally
+		{
+            if(rset != null) try{rset.close();}catch(SQLException ex){}  
+            if(stmt != null) try{stmt.close();}catch(SQLException ex){}            // PreparedStatement 객체 해제
+            if(conn != null) try{conn.close();}catch(SQLException ex){} 
+		}
     }                                        //로그인
     
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)
+    {                                         
         // TODO add your handling code here:
     	JOIN join_frame = new JOIN();
     	join_frame.setVisible(true);
@@ -101,7 +219,7 @@ public class LOGIN extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(LOGIN.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(LOGIN.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+        }	
         //</editor-fold>
         //</editor-fold>
 
