@@ -175,6 +175,7 @@ public class JOIN extends javax.swing.JFrame {
     	PreparedStatement stmt=null;
     	ResultSet rset=null;
     	
+    	tmp_id=jTextField1.getText();
     	tmp_pw=jPasswordField1.getText();
 		tmp_pw2=jPasswordField2.getText();
 		
