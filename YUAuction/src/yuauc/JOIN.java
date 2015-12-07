@@ -212,7 +212,7 @@ public class JOIN extends javax.swing.JFrame {
 	            stmt.setString(1,tmp_id);
 	            stmt.setString(2, tmp_pw);
 	            rset=stmt.executeQuery(); 
-	            conn.commit();
+	            //conn.commit();
 	            
 	            JOptionPane.showMessageDialog(null, "회원가입이 완료되었습니다.\n 로그인 해주세요.", " ", JOptionPane.INFORMATION_MESSAGE);
 	            dispose();
